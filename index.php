@@ -1,49 +1,115 @@
+<?php
+session_start();
+$_SESSION['shift'] = $_COOKIE['shift_1'];
+include("./database/db.php");
+if (!isset($_COOKIE['shift_1']) && !isset($_COOKIE['shift_2'])) {
+    header("location: Loader.php");
+}
+?>
 <!DOCTYPE html>
-<html lang="en">
+<html>
+<title>Simple Sign up from</title>
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-    <link rel="stylesheet" href="./assets/login.css">
-    <title>Boostrap Login | Ludiflex</title>
+    <style>
+        html,
+        body {
+            display: flex;
+            justify-content: center;
+            font-family: Roboto, Arial, sans-serif;
+            font-size: 15px;
+            background-color: #e3e3e3;
+
+        }
+
+        form {
+            background-color: white;
+            margin-top: 50px;
+            border: 5px solid #f1f1f1;
+            width: 80vh;
+            border-radius: 15px;
+            box-shadow: 5px 5px 5px 5px #888888;
+        }
+
+        input[type=text],
+        input[type=password] {
+            width: 100%;
+            padding: 16px 8px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            border-radius: 10px;
+        }
+
+        .icon {
+
+            display: flex;
+            justify-content: center;
+            color: #4286f4;
+        }
+
+        button {
+            background-color: brown;
+            color: white;
+            padding: 14px 0;
+            margin: 10px 0;
+            border: none;
+            cursor: grab;
+            width: 48%;
+            border-radius: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            fone-size: 18;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+        .formcontainer {
+            text-align: center;
+            margin: 24px 50px 12px;
+        }
+
+        .container {
+            padding: 16px 0;
+            text-align: left;
+        }
+
+        span.psw {
+            float: right;
+            padding-top: 0;
+            padding-right: 15px;
+        }
+
+        /* Change styles for span on extra small screens */
+        @media screen and (max-width: 300px) {
+            span.psw {
+                display: block;
+                float: none;
+            }
+        }
+    </style>
 </head>
 
 <body>
-
-    <!----------------------- Main Container -------------------------->
-
-    <div class="container d-flex justify-content-center align-items-center min-vh-100">
-
-        <!----------------------- Login Container -------------------------->
-
-        <div class="row border rounded-5 p-3 bg-white shadow box-area" style="width: 80vh;height: 50vh;">
-
-            <div class="row align-items-center" style="margin-left: 1vh;">
-                <div class="header-text mb-4" style="text-align: center; margin-top: 2vh;">
-                    <h2 style="font-weight: bold;">Admin Login</h2>
-                    <p></p>
-                </div>
-                <form action="./admin/logic/login.php" method="POST">
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control form-control-lg bg-light fs-6" placeholder="Username" name="username" required>
-                    </div>
-                    <div class="input-group mb-1">
-                        <input type="password" class="form-control form-control-lg bg-light fs-6" placeholder="Password" name="password" required>
-                    </div>
-                    <div class="input-group mb-5 d-flex justify-content-between">
-
-                    </div>
-                    <div class="input-group mb-5">
-                        <button class="btn btn-lg btn-primary w-100 fs-6" id="button" type="submit" name="login_submit">
-                            <span style="font-weight:bold;font-size:20px;">Login</span>
-                        </button>
-                    </div>
-                </form>
-            </div>
+    <form action="./admin/logic/login.php" method="POST">
+        <h1>Admin Login</h1>
+        <div class="icon">
+            <img src="./assets//logo.png" alt="sjc logo" height="150vh" width="150vh" />
         </div>
-    </div>
+        <div class="formcontainer">
+            <div class="container">
+                <label for="username"><strong>Username</strong></label>
+                <input type="text" placeholder="Enter Username" name="username" required>
+                <label for="password"><strong>Password</strong></label>
+                <input type="password" placeholder="Enter Password" name="password" required>
+            </div>
+            <button type="submit" name="login_submit"><strong>LOGIN</strong></button>
+    </form>
 </body>
 
 </html>
