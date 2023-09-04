@@ -7,12 +7,13 @@ if (isset($_POST["login_submit"])) {
     $password = $_POST["password"];
     $sel = mysqli_query($con, "SELECT * FROM admin WHERE name='$name' AND password='$password'");
     $row = mysqli_num_rows($sel);
-    echo $row;
+
     if ($row == 1) {
         $_SESSION['id'] = "Admin123";
-        header("location: ../index.php");
+        header("location: ./Strength.php?check1=check1");
     } else {
-        echo "invalid password";
+        $_SESSION['error'] = "Invalid Username or Password!!!";
+        header("location: ../../index.php");
     }
 }
 
@@ -26,34 +27,55 @@ if (isset($_GET['logout'])) {
 
 // to change shift 1 and shift 2 database
 if (isset($_GET['shift_change'])) {
-    $_SESSION['shift'] = $_SESSION['shift'] == $_COOKIE['shift_1'] ? $_COOKIE['shift_2'] : $_COOKIE['shift_1'];
+    $_SESSION['shift'] = $_SESSION['shift'] == "shift1" ? "shift2" : "shift1";
+    $_SESSION['error'] = "Successfully changed to " . $_SESSION['shift'];
     header("location: ../index.php");
 }
 
+//for Reset the alloted course List
+if (isset($_GET['reset'])) {
+    mysqli_query($con, "UPDATE idc_result SET allocate = 0, current = 2");
+    $rows = mysqli_affected_rows($con);
+    if ($rows < 1) {
+        $_SESSION['error'] = "Unable to reset the alloted List. PLEASE TRY AGAIN LATER !!!";
+        header("location: ../index.php");
+    }
+    $_SESSION['error'] = "Course Alloted List Successfully Reset.";
+    header("location: ../index.php");
+}
 
-// to set database username, password and shift 1 and 2 values in cookies
-if (isset($_POST['Check'])) {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-    $shift_1 = $_POST['shift_1'];
-    $shift_2 = $_POST['shift_2'];
-    $userHash = openssl_encrypt(
-        $username,
-        "AES-128-CTR",
-        "SJCAdmin",
-        0,
-        "1234567891011121"
-    );
-    $passwordHash = openssl_encrypt(
-        $password,
-        "AES-128-CTR",
-        "SJCAdmin",
-        0,
-        "1234567891011121"
-    );
-    setcookie("username", $userHash, time() + (86400 * 30), "/"); // 86400 = 1 day
-    setcookie("password", $passwordHash, time() + (86400 * 30), "/"); // 86400 = 1 day
-    setcookie("shift_1", $shift_1, time() + (86400 * 30), "/"); // 86400 = 1 day
-    setcookie("shift_2", $shift_2, time() + (86400 * 30), "/"); // 86400 = 1 day
+//for Change password
+if (isset($_POST['pass_change'])) {
+    $password = $_POST["pass"];
+    $Cpassword = $_POST["cpass"];
+
+    if ($password != $Cpassword) {
+        $_SESSION['error'] = "Password And Confirm Password Does Not Match!!!";
+        header("location: ../changepassword.php?change=change");
+    }
+    mysqli_query($con, "UPDATE admin SET password = '$password'");
+    $rows = mysqli_affected_rows($con);
+    if ($rows != 1) {
+        $_SESSION['error'] = "Unable to reset Your Password. PLEASE TRY AGAIN LATER !!!";
+        header("location: ../index.php");
+    }
+    $_SESSION['error'] = "Password Reset Successfully.";
+    unset($_SESSION['id']);
     header("location: ../../index.php");
+}
+
+// for upload student selected course details
+if (isset($_POST['stud_data'])) {
+    $file = fopen($filename, "r");
+    $temp = fgetcsv($file);
+    while (($data = fgetcsv($file, 10000, ",")) !== FALSE) {
+
+        $sql = "UPDATE idc_result SET subject1 = $data[1], subject2 = $data[2], subject3 = $data[3], status, attendence, dept_name, graduate) values('$data[0]', '$data[1]', $data[2], $data[3], $data[4], $data[5], '$data[6]', '$data[7]')";
+        if (!mysqli_query($con, $sql)) {
+            $_SESSION['error'] = "Unable to upload data. Please Try Again Later !!!";
+            mysqli_query($con, "TRUNCATE TABLE idc_dept");
+            header("location: Data.php");
+        }
+    }
+    fclose($file);
 }

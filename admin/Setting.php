@@ -1,10 +1,14 @@
 <?php
 session_start();
-include("../database/db.php");
 include("../database/alert.php");
+include("../database/db.php");
 if (!isset($_SESSION['id'])) {
     header("location: ../index.php");
 }
+$allocate = mysqli_query($con, "SELECT * FROM idc_result WHERE allocate = 0");
+$allocate_count = mysqli_num_rows($allocate);
+$student = mysqli_query($con, "SELECT * FROM idc_result");
+$student_count = mysqli_num_rows($student);
 ?>
 <!DOCTYPE html>
 <!-- Coding by CodingLab | www.codinglabweb.com -->
@@ -19,13 +23,31 @@ if (!isset($_SESSION['id'])) {
 
     <!----======== CSS ======== -->
     <link rel="stylesheet" href="../assets/style.css">
-    <link rel="stylesheet" href="../assets/loader.css">
+    <link rel="stylesheet" href="../assets/simpleTable.css">
+    <link rel="stylesheet" href="../assets/button.css">
+    <link rel="stylesheet" href="../assets/button1.css">
+    <link rel="stylesheet" href="../assets/popup.css">
 
     <!----===== Boxicons CSS ===== -->
     <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
 
     <!--<title>Dashboard Sidebar Menu</title>-->
+    <style>
+        input[type="file"] {
+            display: inline-block;
+
+            transition: all 0.2s ease-in;
+            position: relative;
+            overflow: hidden;
+            font-size: 19px;
+            color: black;
+            z-index: 1;
+            margin-left: 10vh;
+            margin-top: 2vh;
+
+        }
+    </style>
 </head>
 
 <body>
@@ -48,6 +70,7 @@ if (!isset($_SESSION['id'])) {
 
         <div class="menu-bar">
             <div class="menu">
+
                 <ul class="menu-links">
                     <li class="nav-link">
                         <a href="Index.php">
@@ -70,9 +93,9 @@ if (!isset($_SESSION['id'])) {
                             <span class="text nav-text">Dashboard</span>
                         </a>
                     </li>
-                    <li class="nav-link" id="active">
+                    <li class="nav-link">
                         <a href="AllotmentList.php">
-                            <svg style="color:white" width="24" height="24" viewBox="0 0 42 42" id="icons" class="icon">
+                            <svg width="24" height="24" viewBox="0 0 42 42" id="icons" class="icon">
                                 <g fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-linecap="round">
                                     <g stroke-dasharray="10" stroke-dashoffset="10">
                                         <circle cx="5" cy="5" r="1.5">
@@ -104,7 +127,7 @@ if (!isset($_SESSION['id'])) {
                                     </g>
                                 </g>
                             </svg>
-                            <span class="text nav-text" id="activeColor">Allotment List</span>
+                            <span class="text nav-text">Allotment List</span>
                         </a>
                     </li>
                     <li class="nav-link">
@@ -154,12 +177,12 @@ if (!isset($_SESSION['id'])) {
                         </a>
                     </li>
                     <li class="nav-link">
-                        <a href="Details.php">
-                            <svg viewBox="0 0 37 37" class="icon" id="icons">
+                        <a href="Setting.php" id="active">
+                            <svg viewBox="0 0 37 37" class="icon" id="icons" style="color:white">
                                 <path fill="currentColor" d="M19.9 12.66a1 1 0 0 1 0-1.32l1.28-1.44a1 1 0 0 0 .12-1.17l-2-3.46a1 1 0 0 0-1.07-.48l-1.88.38a1 1 0 0 1-1.15-.66l-.61-1.83a1 1 0 0 0-.95-.68h-4a1 1 0 0 0-1 .68l-.56 1.83a1 1 0 0 1-1.15.66L5 4.79a1 1 0 0 0-1 .48L2 8.73a1 1 0 0 0 .1 1.17l1.27 1.44a1 1 0 0 1 0 1.32L2.1 14.1a1 1 0 0 0-.1 1.17l2 3.46a1 1 0 0 0 1.07.48l1.88-.38a1 1 0 0 1 1.15.66l.61 1.83a1 1 0 0 0 1 .68h4a1 1 0 0 0 .95-.68l.61-1.83a1 1 0 0 1 1.15-.66l1.88.38a1 1 0 0 0 1.07-.48l2-3.46a1 1 0 0 0-.12-1.17ZM18.41 14l.8.9l-1.28 2.22l-1.18-.24a3 3 0 0 0-3.45 2L12.92 20h-2.56L10 18.86a3 3 0 0 0-3.45-2l-1.18.24l-1.3-2.21l.8-.9a3 3 0 0 0 0-4l-.8-.9l1.28-2.2l1.18.24a3 3 0 0 0 3.45-2L10.36 4h2.56l.38 1.14a3 3 0 0 0 3.45 2l1.18-.24l1.28 2.22l-.8.9a3 3 0 0 0 0 3.98Zm-6.77-6a4 4 0 1 0 4 4a4 4 0 0 0-4-4Zm0 6a2 2 0 1 1 2-2a2 2 0 0 1-2 2Z" />
                             </svg>
 
-                            <span class="text nav-text">Details</span>
+                            <span class="text nav-text" id="activeColor">Settings</span>
                         </a>
                     </li>
                 </ul>
@@ -174,7 +197,7 @@ if (!isset($_SESSION['id'])) {
                             '<svg  width="24" height="24" viewBox="0 0 33 33" class="icon" id="icons" style="margin-left: 7px;" >
                             <path fill="currentColor" d="M12 22q-2.075 0-3.9-.788t-3.175-2.137q-1.35-1.35-2.137-3.175T2 12q0-2.075.788-3.9t2.137-3.175q1.35-1.35 3.175-2.137T12 2q2.075 0 3.9.788t3.175 2.137q1.35 1.35 2.138 3.175T22 12q0 2.075-.788 3.9t-2.137 3.175q-1.35 1.35-3.175 2.138T12 22Zm-3-5h6v-2h-4v-2h2q.825 0 1.413-.588T15 11V9q0-.825-.588-1.413T13 7H9v2h4v2h-2q-.825 0-1.413.588T9 13v4Z"/>
                             </svg>' ?>
-                        <span class="text nav-text"><?php echo $_SESSION['shift'] == "'shift1" ? "SHIFT 1" : "SHIFT 2" ?></span>
+                        <span class="text nav-text"><?php echo $_SESSION['shift'] == "shift1" ? "SHIFT 1" : "SHIFT 2" ?></span>
                     </a>
                 </li>
                 <li class="">
@@ -195,57 +218,59 @@ if (!isset($_SESSION['id'])) {
                 <img src="../assets/logo.png" alt="logo">
             </span>
         </nav>
-
-        <?php
-        $course = mysqli_query($con, "SELECT * FROM idc_course");
-        $row = mysqli_num_rows($course);
-        $stud = mysqli_query($con, "SELECT * FROM idc_result WHERE allocate != 0");
-        $student = mysqli_num_rows($stud);
-        if ($row > 0 && $student > 0) {
-        ?>
-            <div id="data">
-                <div class="headtext" id="data">
-                    <h1>Course Alloted List</h1>
-                </div>
-                <?php
-                $code = "";
-                while ($result = mysqli_fetch_array($course)) {
-                    $courseID = $result['id'];
-                    $students = mysqli_query($con, "SELECT * FROM idc_result WHERE allocate = $courseID ORDER BY dept_name");
-                    $strength = mysqli_num_rows($students);
-                ?>
-                    <div class="card">
-                        <div class="header"> <?php echo $result['course']; ?> <span class="header-span">Strength : <?php echo $strength ?></span></div>
-                        <?php
-                        while ($studentsResult = mysqli_fetch_array($students)) {
-                            $temp = str_split($studentsResult['dno'], 5);
-                            if ($code != $temp[0]) {
-                                $code = $temp[0];
-                        ?>
-                                <div class="body">
-                                    <div class="left">
-                                        <div class="skill-name">
-                                            <?php echo $code ?>
-                                        </div>
-                                    </div>
-                                    <div class="right">
-                                        <div class="skill-dno"> <?php numbers($con,  $courseID, $code) ?>
-                                        </div>
-
-                                    </div>
-                                </div>
-                        <?php }
-                        } ?>
-                    </div>
-            </div>
-        <?php }
-            } else { ?>
-        <div class="nodata" id="data">
-            <h1>No Courses Are Allotted To Display.</h1>
+        <div class="shift">
+            <h1 style="text-align: center;"> <?php echo $_SESSION['shift'] == 'shift1' ? "Shift 1" : "Shift 2" ?> SETTING</h1>
         </div>
-    <?php } ?>
-    <div class="loader" id="load">Loading...</div>
+        <div style="margin-top: 8vh; width:60%; margin-left: 45vh;">
+            <table>
+                <tr>
+                    <td>Upload Course Selected <br>Students List </td>
+                    <td>
+                        <?php echo $allocate_count < $student_count  ? "<button class=button >Upload</button>" : "<button class=button onclick=show('popup1')>Upload</button>"  ?>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td>Unallot the alloted Course </td>
+                    <td><a href="./logic/login.php?reset=reset"><button class="button">Reset Allocation</button></a></td>
+
+                </tr>
+                <tr>
+                    <td>Change Password</td>
+                    <td><a href="changepassword.php?change=change"><button class="button">Change Password</button></a></td>
+
+                </tr>
+
+                <tr>
+                    <td>Island Trading</td>
+                    <td>Helen Bennett</td>
+
+                </tr>
+                <tr>
+                    <td>Laughing Bacchus Winecellars</td>
+                    <td>Yoshi Tannamuri</td>
+
+                </tr>
+                <tr>
+                    <td>Magazzini Alimentari Riuniti</td>
+                    <td>Giovanni Rovelli</td>
+
+                </tr>
+            </table>
+        </div>
+
     </section>
+    <div class="popup" id="popup1" style="height:220px;width: 450px;">
+        <h3 style="text-align: center; margin-top : 2vh;">Choose File</h3>
+        <form action="./logic/login.php" enctype="multipart/form-data" method="post" style="margin-top: 4vh;">
+            <input id="file" name="file" type="file" accept=".csv" required>
+            <div style="margin-top: 4vh;">
+                <a href="./Formate/Formate.php?stud_data=2"><button type="button" name="stud_data" class="button" style="width: 18vh;padding: 6px 16px; float: left; margin-left: 2%;">Formate</button></a>
+                <button type="submit" name="stud_data" class="button" style="width: 18vh;padding: 6px 16px; float: left; margin-left: 5%;">Upload</button>
+                <button class="button1" onclick="hide('popup1')" style="float: right; margin-right: 5%;width: 18vh;padding: 6px 16px;">Cancle</button>
+            </div>
+        </form>
+    </div>
 
 
 </body>
@@ -260,35 +285,15 @@ if (!isset($_SESSION['id'])) {
 
     toggle.addEventListener("click", () => {
         sidebar.classList.toggle("close");
-    });
+    })
+    $ = function(id) {
+        return document.getElementById(id);
+    }
 
-    // setTimeout(hide, 10000);
-    document.getElementById("load").style.display = "none";
-
-    function hide() {
-        document.getElementById("load").style.display = "none";
-        document.getElementById("data").style.display = "block";
+    var show = function(id) {
+        $(id).style.display = 'block';
+    }
+    var hide = function(id) {
+        $(id).style.display = 'none';
     }
 </script>
-
-<?php
-function numbers($con, $courseID, $code)
-{
-    $sel = mysqli_query($con, "SELECT * FROM idc_result WHERE allocate = $courseID ORDER BY dno");
-    $c = 0;
-    while ($result = mysqli_fetch_array($sel)) {
-        $deptName = $result['dept_name'];
-        $sel2 = mysqli_query($con, "SELECT * FROM idc_result WHERE allocate = $courseID AND dept_name = '$deptName' ORDER BY dno");
-        $count = mysqli_num_rows($sel2);
-        $temp = str_split($result['dno'], 5);
-
-        if ($temp[0] == $code) {
-            $c++;
-            echo $temp[1];
-            if ($count != $c) {
-                echo  "<span class='skill-span'> | </span> ";
-            }
-        }
-    }
-}
-?>

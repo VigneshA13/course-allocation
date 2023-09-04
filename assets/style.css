@@ -337,12 +337,12 @@ header .image-text .profession {
 }
 
 .left {
-  flex: 2;
+  flex: 1;
   flex-direction: column;
   text-align: center;
 }
 .right {
-  flex: 8;
+  flex: 9;
   flex-direction: column;
   border-left: 1px solid black;
 }
@@ -351,7 +351,30 @@ header .image-text .profession {
   font-weight: bold;
   text-align: center;
 }
-
+.code {
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  width: 25vh;
+  border-right: 1px solid black;
+}
+.dno {
+  font-size: 20px;
+  font-weight: bold;
+  margin-left: 2%;
+}
+.dno-data {
+  border-right: 1px solid black;
+  display: inline-block;
+  width: 63px;
+  text-align: center;
+  margin-top: 1%;
+}
+.dno-data2 {
+  display: inline-block;
+  width: 63px;
+  text-align: center;
+}
 .skill-dno {
   font-size: 20px;
   font-weight: bold;
@@ -361,7 +384,6 @@ header .image-text .profession {
 .skill-span {
   font-size: 18px;
   font-weight: normal;
-  padding: 7px;
 }
 
 /* dashboard card */

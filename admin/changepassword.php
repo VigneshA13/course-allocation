@@ -1,17 +1,14 @@
 <?php
 session_start();
-
-$_SESSION['shift'] = 'shift1';
-include("./database/db.php");
-include("./database/alert.php");
-if (!isset($_COOKIE['username']) && !isset($_COOKIE['password'])) {
-    header("location: Loader.php");
+include("../database/alert.php");
+if (!isset($_GET['change'])) {
+    header("location:index.php");
 }
 ?>
 <!DOCTYPE html>
 <html>
 <title>Admin Login</title>
-<link rel="icon" href="./assets/logo.png">
+<link rel="icon" href="../assets/logo.png">
 
 <head>
     <style>
@@ -21,18 +18,17 @@ if (!isset($_COOKIE['username']) && !isset($_COOKIE['password'])) {
             justify-content: center;
             font-family: Roboto, Arial, sans-serif;
             font-size: 15px;
-            background-color: #e3e3e3;
-
+            background-color: #ebebeb;
         }
 
         form {
             background-color: white;
-            margin-top: 50px;
+            margin-top: 125px;
             border: 5px solid #f1f1f1;
             width: 80vh;
-            border-radius: 15px;
+            border-radius: 5px;
             box-shadow: 5px 5px 5px 5px #888888;
-            height: 80vh;
+            height: 57vh;
         }
 
         input[type=text],
@@ -100,19 +96,18 @@ if (!isset($_COOKIE['username']) && !isset($_COOKIE['password'])) {
 </head>
 
 <body>
-    <form action="./admin/logic/login.php" method="POST">
-        <h1>Admin Login</h1>
-        <div class="icon">
-            <img src="./assets//logo.png" alt="sjc logo" height="175vh" width="175vh" />
-        </div>
-        <div class="formcontainer" style="margin-top: -5px;">
+    <form action="./logic/login.php" method="POST">
+        <h1>Change Admin Password</h1>
+
+        <div class="formcontainer" style="margin-top: 5px;">
             <div class="container">
-                <label for="username"><strong>Username</strong></label>
-                <input type="text" placeholder="Enter Username" name="username" required>
-                <label for="password"><strong>Password</strong></label>
-                <input type="password" placeholder="Enter Password" name="password" required>
+                <label for="username"><strong>New Password</strong></label>
+                <input type="text" placeholder="Enter New Password" name="pass" required>
+                <label for="password"><strong>Confirm Password</strong></label>
+                <input type="text" placeholder="Enter Conform Password" name="cpass" required>
             </div>
-            <button type="submit" name="login_submit"><strong>LOGIN</strong></button>
+            <button type="submit" name="pass_change"><strong>CHANGE PASSWORD</strong></button>
+            <a href="./Setting.php"><button type="button" name="Check"><strong>BACK</strong></button></a>
     </form>
 </body>
 
