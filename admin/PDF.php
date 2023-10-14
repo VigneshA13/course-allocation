@@ -1,4 +1,5 @@
 <?php
+session_start();
 include("../database/db.php");
 require "../assets/dompdf/autoload.inc.php";
 if (!isset($_SESSION['id'])) {
@@ -7,7 +8,13 @@ if (!isset($_SESSION['id'])) {
 
 use Dompdf\Dompdf;
 
-$count = 1;
+$course = mysqli_query($con, "SELECT * FROM idc_course");
+
+while ($courseResult = mysqli_fetch_array($course)) {
+    $courseID = $courseResult['id'];
+    $_SESSION["id_$courseID"] = $courseResult['course'];
+}
+
 
 $select = mysqli_query($con, "SELECT * FROM idc_result ORDER BY dno");
 
@@ -50,25 +57,29 @@ $html = "
     <table>
         <thead>
             <tr>
-                <td>S No.</td>
-                <td>D No.</td>
-                <td>Option 1</td>
-                <td>Option 2</td>
-                <td>Option 3</td>
-                <td>Alloted Course</td>
+                <td style='font-weight:bold;'>S No.</td>
+                <td style='font-weight:bold;'>D No.</td>
+                <td style='font-weight:bold;'>Option 1</td>
+                <td style='font-weight:bold;'>Option 2</td>
+                <td style='font-weight:bold;'>Option 3</td>
+                <td style='font-weight:bold;'>Alloted Course</td>
             </tr>
         </thead>
         <tbody>";
 
 while ($result = mysqli_fetch_array($select)) {
+    $option1 = $result['subject1'];
+    $option2 = $result['subject2'];
+    $option3 = $result['subject3'];
+    $alloted = $result['allocate'];
     $html .= "
     <tr>
         <td>" . $result['sid'] . "</td>
         <td>" . $result['dno'] . "</td>
-        <td>" . courseName($con, $result['subject1']) . "</td>
-        <td>" . courseName($con, $result['subject2']) . "</td>
-        <td>" . courseName($con, $result['subject3']) . "</td>
-        <td>" . courseName($con, $result['allocate']) . "</td>
+        <td>" . ($option1 == 0 ? $option1 : $_SESSION["id_$option1"])  . "</td>
+        <td>" . ($option2 == 0 ? $option2 : $_SESSION["id_$option2"]) . "</td>
+        <td>" . ($option3 == 0 ? $option3 : $_SESSION["id_$option3"]) . "</td>
+        <td>" . $_SESSION["id_$alloted"] . "</td>
     </tr>";
 }
 
@@ -84,13 +95,3 @@ $dompdf->loadHtml($html);
 $dompdf->setPaper('A4', 'landscape');
 $dompdf->render();
 $dompdf->stream('Course_Allocationlist.pdf', ["Attachment" => 0]);
-
-function courseName($con, $option)
-{
-    if ($option != 0) {
-        $sel = mysqli_query($con, "SELECT * FROM idc_course WHERE id = $option");
-        $CourseName = mysqli_fetch_array($sel);
-        return $CourseName['course'];
-    }
-    return $option;
-}
